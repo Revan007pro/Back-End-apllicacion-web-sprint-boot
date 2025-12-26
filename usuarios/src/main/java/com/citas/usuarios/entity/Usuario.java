@@ -18,6 +18,8 @@ public class Usuario {
     @Column(name = "id_persona")
     private long id;
 
+    @Column(name="apellidos")
+    private String apellidos;
 
     @Column(name = "contrasenia")
     private String password;
@@ -28,22 +30,40 @@ public class Usuario {
     @Column(name = "correo")
     private String correo;
 
+    @Column(name="fecha_nacimiento")
+    private String fecha_nacimiento;
+
     @Column(name = "telefono")
     private BigInteger telefono;
 
-    @Column(name= "usuario")
-    private String usuario;
+    @Column(name= "roll")
+    private String roll;
 
     public long getId() {
         return id;
     }
 
-    public String getUsuario() {
-        return usuario;
+    public String getRoll() {
+        return roll;
+    }
+    public void setNewRoll(String roll){
+        this.roll=roll;
     }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
+    public void setUsuario(String roll) {
+        this.roll = roll;
+    }
+    public String getApellidos(){
+        return apellidos;
+    }
+    public void setApellidos(String apellidos){
+        this.apellidos=apellidos;
+    }
+    public String getFechaNacimiento(){
+        return fecha_nacimiento;
+    }
+    public void setFechaNacmiento(String fecha_nacimiento){
+        this.fecha_nacimiento=fecha_nacimiento;
     }
 
     public String getPassword() {

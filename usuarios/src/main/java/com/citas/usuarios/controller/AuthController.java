@@ -18,7 +18,7 @@ import com.citas.usuarios.repository.UsuarioRepository;
 public class AuthController {
 
     @Autowired
-    public UsuarioRepository usuarioRepository;
+    private UsuarioRepository usuarioRepository;
 
     @PostMapping("/login")
     public Map<String, Object> loginPost(@RequestBody LoginRequest request) {
@@ -33,15 +33,23 @@ public class AuthController {
         if (userDB.getNombre().equalsIgnoreCase(nombre) && userDB.getPassword().equalsIgnoreCase(password)) {
             respuesta.put("mensaje", "Bienvenido al sistema");
             Map<String, Object> datosUsuarios = new HashMap<>();
-            datosUsuarios.put("usuario", userDB.getUsuario());
+            datosUsuarios.put("usuario", userDB.getRoll());
             datosUsuarios.put("nombre", userDB.getNombre());
             datosUsuarios.put("correo", userDB.getCorreo());
             datosUsuarios.put("telefono", userDB.getTelefono());
-            if (userDB.getUsuario().equalsIgnoreCase("admi")) {
+            if (userDB.getRoll().equalsIgnoreCase("Administrador")) {
                 respuesta.put("urlTarget", "/Administrador");
             }
-            else if(userDB.getUsuario().equalsIgnoreCase("empleado")){
+            else if(userDB.getRoll().equalsIgnoreCase("empleado")){
                 respuesta.put("urlTarget", "/empleado");
+            }
+            else{
+                respuesta.put("urlTarget", "/Agendar_cita"); /*
+                                                            Nota: por ahora cuando se guarde un usuario, y se llame en el login
+                                                            el rol no puede ser nulo cuando se lleme en el login, hacer un script
+                                                            para que cuando se guarde y el roll es nulo colocar como txt nulo.
+                */
+
             }
             respuesta.put("datos", datosUsuarios);
         } else {
