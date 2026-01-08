@@ -3,14 +3,14 @@ package com.citas.usuarios.dto;
 public class LoginRequest {
     private String nombre;
     private String password;
-    private String usuario;
+    private String roll;
 
-    public String getUsuario(){
-        return usuario;
+    public String getRoll(){
+        return roll;
     }
 
-    public void setUsuario(String usuario){
-        this.usuario=usuario;
+    public void setUsuario(String roll){
+        this.roll=roll;
     }
 
     public String getNombre() {

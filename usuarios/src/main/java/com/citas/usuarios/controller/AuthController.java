@@ -33,7 +33,7 @@ public class AuthController {
         if (userDB.getNombre().equalsIgnoreCase(nombre) && userDB.getPassword().equalsIgnoreCase(password)) {
             respuesta.put("mensaje", "Bienvenido al sistema");
             Map<String, Object> datosUsuarios = new HashMap<>();
-            datosUsuarios.put("usuario", userDB.getRoll());
+            datosUsuarios.put("roll", userDB.getRoll());
             datosUsuarios.put("nombre", userDB.getNombre());
             datosUsuarios.put("correo", userDB.getCorreo());
             datosUsuarios.put("telefono", userDB.getTelefono());
@@ -44,11 +44,8 @@ public class AuthController {
                 respuesta.put("urlTarget", "/empleado");
             }
             else{
-                respuesta.put("urlTarget", "/Agendar_cita"); /*
-                                                            Nota: por ahora cuando se guarde un usuario, y se llame en el login
-                                                            el rol no puede ser nulo cuando se lleme en el login, hacer un script
-                                                            para que cuando se guarde y el roll es nulo colocar como txt nulo.
-                */
+                respuesta.put("urlTarget", "/dashboard_usuario"); 
+    
 
             }
             respuesta.put("datos", datosUsuarios);
