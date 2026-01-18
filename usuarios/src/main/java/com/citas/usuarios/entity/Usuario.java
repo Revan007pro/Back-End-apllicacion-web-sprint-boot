@@ -10,7 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-//@Inheritance(strategy = InheritanceType.JOINED) puede ser itil despues
+//@Inheritance(strategy = InheritanceType.JOINED) puede ser util despues
 @Table(name = "usuario")
 public class Usuario {
 

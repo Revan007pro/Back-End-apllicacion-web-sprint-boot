@@ -18,7 +18,7 @@ import com.citas.usuarios.repository.UsuarioRepository;
 public class AuthController {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    public UsuarioRepository usuarioRepository;
 
     @PostMapping("/login")
     public Map<String, Object> loginPost(@RequestBody LoginRequest request) {

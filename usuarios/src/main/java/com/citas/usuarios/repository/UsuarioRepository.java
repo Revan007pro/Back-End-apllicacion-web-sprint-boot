@@ -6,4 +6,5 @@ import com.citas.usuarios.entity.Usuario;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Usuario findByNombre(String nombre);
+    Usuario findById(Integer id_persona);
 }

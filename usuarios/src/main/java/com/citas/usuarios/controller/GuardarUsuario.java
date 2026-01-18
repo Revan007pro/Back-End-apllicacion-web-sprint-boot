@@ -1,5 +1,6 @@
 package com.citas.usuarios.controller;
 
+
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.citas.usuarios.dto.SaveRequest;
 import com.citas.usuarios.entity.Usuario;
 import com.citas.usuarios.repository.UsuarioRepository;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -20,6 +22,9 @@ public class GuardarUsuario {
 
     @Autowired
     private UsuarioRepository newusuarioRepository;
+
+  /*   @Autowired
+    private PasswordEncoder passwordEncoder; */
 
     @PostMapping("/guardar/usuario")
 public Map<String, Object> savePost(@RequestBody SaveRequest newRequest) {
@@ -59,6 +64,9 @@ public Map<String, Object> savePost(@RequestBody SaveRequest newRequest) {
     //nuevoUsuario.setNewConfirmar(newConfirmar);
     nuevoUsuario.setTelefono(newTelefono); 
     nuevoUsuario.setNewRoll(roll); // coloca para empezar a cliente todos los nuevos usuarios
+
+/*     String passwordHasheada = passwordEncoder.encode(newContrasenia);
+    nuevoUsuario.setPassword(passwordHasheada); */
 
     
 
