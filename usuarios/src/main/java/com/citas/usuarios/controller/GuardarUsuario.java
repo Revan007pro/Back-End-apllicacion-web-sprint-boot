@@ -21,7 +21,7 @@ import com.citas.usuarios.repository.UsuarioRepository;
 public class GuardarUsuario {
 
     @Autowired
-    private UsuarioRepository newusuarioRepository;
+    public UsuarioRepository newusuarioRepository;
 
   /*   @Autowired
     private PasswordEncoder passwordEncoder; */

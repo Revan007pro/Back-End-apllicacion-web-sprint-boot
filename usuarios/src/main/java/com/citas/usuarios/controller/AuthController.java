@@ -37,10 +37,11 @@ public class AuthController {
             datosUsuarios.put("nombre", userDB.getNombre());
             datosUsuarios.put("correo", userDB.getCorreo());
             datosUsuarios.put("telefono", userDB.getTelefono());
+            datosUsuarios.put("usuario", userDB.getUsuarioAtributo());
             if (userDB.getRoll().equalsIgnoreCase("Administrador")) {
                 respuesta.put("urlTarget", "/Administrador");
             }
-            else if(userDB.getRoll().equalsIgnoreCase("empleado")){
+            else if(userDB.getUsuarioAtributo().equalsIgnoreCase("Empleado")){
                 respuesta.put("urlTarget", "/empleado");
             }
             else{

@@ -4,9 +4,18 @@ public class LoginRequest {
     private String nombre;
     private String password;
     private String roll;
+    private String usuario;
+
+    public String getUsuario(){
+        return usuario;
+    }
 
     public String getRoll(){
         return roll;
+    }
+
+    public void setUsuarioAtributo(String usario){
+        this.usuario=usario;
     }
 
     public void setUsuario(String roll){

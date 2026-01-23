@@ -32,28 +32,20 @@ public class Citas {
     @Column(name="id_sede")
 private Integer idSede;
 
-/* @Column(name="nombre_sede")
-private String nombreSede; */
+
 
     public void setIdSede(Integer idSede) {
     this.idSede = idSede;
 }
 
-/* public void setNombreSede(String nombreSede) {
-    this.nombreSede = nombreSede;
-}
- */
 
     @Column(name="fecha")
     private LocalDate citaFecha;
 
 
-    @Column(name="hora_inicio")
+    @Column(name="hora_cita")
     private LocalTime horaInicio;
 
-
-    @Column(name="hora_final")
-    private LocalTime horaFinal;
 
 
     public long getIdCita(){
@@ -78,9 +70,6 @@ private String nombreSede; */
         return horaInicio;
     }
 
-    public LocalTime getHoraFinal(){
-        return horaFinal;
-    }
 
     public void setIdCita(long idCita){
         this.idCita=idCita;
@@ -103,8 +92,6 @@ private String nombreSede; */
         this.horaInicio=horaInicio;
     }
 
-    public void sethoraFinalCita(LocalTime horaFinal){
-        this.horaFinal=horaFinal;
-    }
+
 
 }

@@ -8,6 +8,7 @@ public class CitasRequest {
 
     private String especialidad;
     private Integer idCliente;
+    
 
     @JsonProperty("nombreEespecialista")
     private String nombreEspecialista;

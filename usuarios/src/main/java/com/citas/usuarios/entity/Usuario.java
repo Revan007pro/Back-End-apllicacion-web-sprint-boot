@@ -31,6 +31,9 @@ public class Usuario {
     @Column(name = "correo")
     private String correo;
 
+    @Column(name="Usuario")
+    private String userAtributo;
+
     @Column(name="fecha_nacimiento")
     private String fecha_nacimiento;
 
@@ -39,6 +42,10 @@ public class Usuario {
 
     @Column(name= "roll")
     private String roll;
+
+    public String getUsuarioAtributo(){
+        return userAtributo;
+    }
 
     public long getId() {
         return id;
@@ -85,6 +92,10 @@ public class Usuario {
 
     public String getCorreo() {
         return correo;
+    }
+
+    public void setUuserAtritubi(String userAtributo){
+        this.userAtributo=userAtributo;
     }
 
     public void setCorreo(String correo) {
