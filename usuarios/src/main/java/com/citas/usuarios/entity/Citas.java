@@ -9,7 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -20,13 +20,13 @@ public class Citas {
     @Column(name="id_cita")
     private long idCita;
 
-    @OneToOne
-    @JoinColumn(name="id_persona",referencedColumnName ="id_persona")
-    private Usuario usuario;
+   @ManyToOne 
+@JoinColumn(name="id_persona", referencedColumnName ="id_persona")
+private Usuario usuario;
 
-    @OneToOne
-    @JoinColumn(name="id_empleado", referencedColumnName="id_empleado")
-    private Empleados empleado;
+@ManyToOne 
+@JoinColumn(name="id_empleado", referencedColumnName="id_empleado")
+private Empleados empleado;
 
 
     @Column(name="id_sede")

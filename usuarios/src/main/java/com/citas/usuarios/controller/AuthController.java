@@ -28,7 +28,9 @@ public class AuthController {
         String password = request.getPassword();
 
 
+
         Usuario userDB = usuarioRepository.findByNombre(nombre);
+
 
         if (userDB.getNombre().equalsIgnoreCase(nombre) && userDB.getPassword().equalsIgnoreCase(password)) {
             respuesta.put("mensaje", "Bienvenido al sistema");
@@ -38,6 +40,8 @@ public class AuthController {
             datosUsuarios.put("correo", userDB.getCorreo());
             datosUsuarios.put("telefono", userDB.getTelefono());
             datosUsuarios.put("usuario", userDB.getUsuarioAtributo());
+            datosUsuarios.put("identificacion", userDB.getId());
+            
             if (userDB.getRoll().equalsIgnoreCase("Administrador")) {
                 respuesta.put("urlTarget", "/Administrador");
             }

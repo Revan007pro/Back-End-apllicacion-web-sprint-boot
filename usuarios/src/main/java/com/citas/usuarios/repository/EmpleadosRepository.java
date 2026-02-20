@@ -8,5 +8,6 @@ import com.citas.usuarios.entity.Usuario;
 public interface EmpleadosRepository extends JpaRepository<Empleados, Long> {
     //Usuario findByNombre(String nombre);
     Empleados findByUsuario(Usuario usuario);
+    Empleados findById(long idEmpleado);
     // Al estar vacío, ya tienes acceso a save(), delete(), findById(), etc.
 }

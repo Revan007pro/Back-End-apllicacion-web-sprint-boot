@@ -5,6 +5,11 @@ public class LoginRequest {
     private String password;
     private String roll;
     private String usuario;
+    private long id;
+
+    public Long getIdUser(){
+        return id;
+    }
 
     public String getUsuario(){
         return usuario;
@@ -24,6 +29,10 @@ public class LoginRequest {
 
     public String getNombre() {
         return nombre;
+    }
+
+    public void setIdUser(Long id){
+        this.id=id;
     }
 
     public void setNombre(String nombre) {
