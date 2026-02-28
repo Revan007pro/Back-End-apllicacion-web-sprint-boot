@@ -36,6 +36,7 @@ public class CitasController {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private EmpleadosRepository empleadoRepository;
+
  
     @PostMapping("/guardar/cita")
     public Map<String, Object> SaveCita(@RequestBody CitasRequest newsCita) {
@@ -46,9 +47,11 @@ public class CitasController {
         Integer idCliente = newsCita.getIdCliente();
         String fechaCita = newsCita.getFecha();
         String horaInicio = newsCita.getHorainicio();
+        
 
         Empleados empleadoDB = empleadoRepository.findById(idEmpleado).orElse(null);
         Usuario usuarioDB = usuarioRepository.findById(idCliente);
+        
 
         if (newsCita.getFecha() == null || newsCita.getHorainicio() == null) {
             Respuesta.put("status", "error");

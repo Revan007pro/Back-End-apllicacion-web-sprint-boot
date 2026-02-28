@@ -64,6 +64,10 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <addResouces>true</addResouces> <!--para logar autocompilar  -->
+                </configuration> 
             </plugin>
         </plugins>
     </build>

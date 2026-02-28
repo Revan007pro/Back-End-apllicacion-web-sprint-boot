@@ -28,6 +28,14 @@ public class Empleados {
     @Column(name ="id_cargo")
     private long idCargo;
 
+    @Column(name="roll")
+    private String roll;
+
+
+    public String getRollEmpleado(){return roll;}
+
+    public void setRollEmpleado(String roll){this.roll=roll;}
+
 
     public long getIdEmpleado() {
         return idEmpleado;
