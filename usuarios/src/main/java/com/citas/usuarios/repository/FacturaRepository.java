@@ -11,15 +11,17 @@ public interface FacturaRepository extends JpaRepository<Factura, Long> {
     @Query("SELECT f FROM Factura f WHERE f.citaFactu.idCita = :idCita")
     List<Factura> buscarById(@Param("idCita") Long idCita);
 @Query("""
-        SELECT new com.citas.usuarios.dto.PrecioTServicio(
-            f.idFactura,
-            f.citaFactu.usuario.nombre,
-            f.citaFactu.empleado.usuario.nombre,
-            f.precio.valorPrecio,
-            f.totalFactura
-        )
-        FROM Factura f
-        """)
-    List<PrecioTServicio> obtenerFacturas(@Param("id_cita") Long id_cita);
+    SELECT new com.citas.usuarios.dto.PrecioTServicio(
+        f.idFactura,
+        f.citaFactu.usuario.nombre,
+        f.citaFactu.empleado.usuario.nombre,
+        f.precio.valorPrecio,
+        f.totalFactura,
+        f.citaFactu.idCita
+    )
+    FROM Factura f
+    WHERE f.citaFactu.idCita = :idCita
+""")
+List<PrecioTServicio> obtenerFacturas(@Param("idCita") Long idCita);
 
 }

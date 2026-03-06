@@ -9,7 +9,7 @@ public class SaveRequest {
     public String new_apellidos;
 
    // @JsonFormat(pattern = "dd-MM-yyyy")
-    public String fecha_nacimiento;
+    public String newfecha_nacimiento;
     public String new_correo;
     public String new_contrasenia;
     public String confirmar_new_contrasenia;
@@ -35,10 +35,10 @@ public class SaveRequest {
         this.new_apellidos=new_apellidos;
     }
     public String getNewfecha_nacimiento(){
-        return fecha_nacimiento;
+        return newfecha_nacimiento;
     }
-    public void setNewFecha_Nacimiento(String fecha_nacimeinto){
-        this.fecha_nacimiento=fecha_nacimeinto;
+    public void setNewFecha_Nacimiento(String newfecha_nacimiento){
+        this.newfecha_nacimiento=newfecha_nacimiento;
     }
     public String getNewCorreo(){
         return new_correo;
@@ -56,7 +56,7 @@ public class SaveRequest {
         return confirmar_new_contrasenia;
     }
     public void setNewConfirmar(String confirmar_new_contrasenia){
-        this.confirmar_new_contrasenia=new_contrasenia;
+        this.confirmar_new_contrasenia=confirmar_new_contrasenia;
     }
     public BigInteger getNewTelefono(){
         return new_telefono;
