@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import com.citas.usuarios.dto.PrecioTServicio;
 import com.citas.usuarios.entity.Factura;
 public interface FacturaRepository extends JpaRepository<Factura, Long> {
+    Factura findById(long idFactu);
     @Query("SELECT f FROM Factura f WHERE f.citaFactu.idCita = :idCita")
     List<Factura> buscarById(@Param("idCita") Long idCita);
 @Query("""

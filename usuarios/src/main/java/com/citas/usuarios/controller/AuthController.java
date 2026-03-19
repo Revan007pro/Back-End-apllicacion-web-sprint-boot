@@ -1,12 +1,14 @@
 package com.citas.usuarios.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,13 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.citas.usuarios.dto.LoginRequest;
 import com.citas.usuarios.entity.Usuario;
 import com.citas.usuarios.repository.UsuarioRepository;
-
+ 
 @RestController
 @CrossOrigin(origins = "*")
 public class AuthController {
 
     @Autowired
     public UsuarioRepository usuarioRepository;
+
 
     @PostMapping("/login")
     public  Map<String, Object>loginPost(@RequestBody LoginRequest request) {
@@ -69,10 +72,38 @@ public class AuthController {
         String password = request2.getPassword();
 
         String Key="mensaje";
-        Integer Code;
         String Value = "Bienvenido ";
 
         Usuario userDB = usuarioRepository.findByNombre(nombre);
+if ((nombre == null || nombre.isEmpty()) && (password == null || password.isEmpty())) {
+    respuesta2.put("mensaje", "Debe ingresar datos para poder ingresar");
+    respuesta2.put("Code", 2);
+    return ResponseEntity.badRequest().body(respuesta2);
+}
+
+if(userDB == null){
+    respuesta2.put("mensaje","Usuario no encontrado");
+    respuesta2.put("Code",6);
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta2);
+}
+
+if (nombre == null || nombre.isEmpty()) {
+    respuesta2.put("mensaje", "Debe ingresar un nombre válido");
+    respuesta2.put("Code", 4);
+    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(respuesta2);
+}
+
+if (password == null || password.isEmpty()) {
+    respuesta2.put("mensaje", "Debe ingresar una contraseña válida");
+    respuesta2.put("Code", 3);
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(respuesta2);
+}
+
+if (userDB.getNombre().equalsIgnoreCase(nombre) && !userDB.getPassword().equals(password)) {
+    respuesta2.put("mensaje", "contraseña no valida");
+    respuesta2.put("Code", 5);
+    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(respuesta2);
+}
         if (userDB.getNombre().equalsIgnoreCase(nombre) && userDB.getPassword().equalsIgnoreCase(password)) {
             respuesta2.put("mensaje", "Bienvenido al sistema");
             respuesta2.put("roll", userDB.getRoll());
@@ -84,19 +115,19 @@ public class AuthController {
             
             if (userDB.getRoll().equalsIgnoreCase("Administrador")) {
                 respuesta2.put("urlTarget", "/Administrador");
-                respuesta2.put("Code",2);
+                respuesta2.put("Code",1);
                 respuesta2.put(Key,Value + userDB.getNombre());
                 return ResponseEntity.status(HttpStatus.FOUND).body(respuesta2);
             }
-            else if(userDB.getUsuarioAtributo().equalsIgnoreCase("Empleado")){
+            else if(userDB.getRoll().equalsIgnoreCase("Empleado")){
                 respuesta2.put("urlTarget", "/empleado");
-                respuesta2.put("Code",2);
+                respuesta2.put("Code",1);
                 respuesta2.put(Key,Value + userDB.getNombre());
                 return ResponseEntity.status(HttpStatus.FOUND).body(respuesta2);
             }
             else{
                 respuesta2.put("urlTarget", "/dashboard_usuario"); 
-                respuesta2.put("Code",2);
+                respuesta2.put("Code",1);
                 respuesta2.put(Key,Value + userDB.getNombre());
                 return ResponseEntity.status(HttpStatus.FOUND).body(respuesta2);
     
@@ -104,5 +135,30 @@ public class AuthController {
             }}
         return ResponseEntity.ok(respuesta2);
 
+    }
+    @GetMapping("/listar/usuarios")
+    public ResponseEntity<Map<String,Object>>listarUsuarios(){
+        Map<String,Object>respuesta=new HashMap <>();
+        List<Usuario>usuarios=usuarioRepository.findAll();
+            //return usuarioRepository.findAll();
+            try{
+                if(usuarios.isEmpty()){
+                respuesta.put("code",2);
+            respuesta.put("datos",usuarios);
+            respuesta.put("mensaje","probablemente no hay registros en la base de datos");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
+            }
+            respuesta.put("mensaje","exito en enviar todos los usuarios del sistema");
+            respuesta.put("code",1);
+            respuesta.put("datos",usuarios);
+            return ResponseEntity.status(HttpStatus.OK).body(respuesta);
+            
+
+            }catch(Exception err){
+            respuesta.put("mensaje","error interno");
+            respuesta.put("code",3);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);
+            }
+            
     }
 }

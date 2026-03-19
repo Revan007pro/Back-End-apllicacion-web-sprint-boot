@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -193,14 +194,21 @@ public Map<String, Object> reprogramarCitas(@PathVariable Long idCita, @RequestB
         return nuevaCita.findByIdSede(idSede);
     }
 
-    @PutMapping("/citas/borrar")
+    @PutMapping("/citas/borrar/{idCita}")
     public Map<String, Object> borrarCita(@RequestParam long idCita) {
         Map<String, Object> deleteCita = new HashMap<>();
 
         try {
+            if (!nuevaCita.existsById(idCita)) {
+                deleteCita.put("mensaje", "error la cita no ha sido encontrada");
+                deleteCita.put("codigo",2);
+                deleteCita.put("status", false);
+                return deleteCita;
+            }
             if (nuevaCita.existsById(idCita)) {
                 nuevaCita.deleteById(idCita); // borra los datos por id
                 deleteCita.put("mensaje", "Cita eliminada correctamente");
+                deleteCita.put("codigo",1);
                 deleteCita.put("status", true);
                 return deleteCita;
             }
@@ -213,4 +221,40 @@ public Map<String, Object> reprogramarCitas(@PathVariable Long idCita, @RequestB
         return deleteCita;
 
     }
+
+     @PutMapping("/citas/borrar/vesion2/{idCita}")
+    public ResponseEntity <Map<String, Object>> borrarCitaV2(@RequestParam long idCita) {
+        Map<String, Object> deleteCita2 = new HashMap<>();
+
+        try {
+            if (!nuevaCita.existsById(idCita)) {
+                deleteCita2.put("mensaje", "error la cita no ha sido encontrada");
+                deleteCita2.put("codigo",2);
+                deleteCita2.put("status", false);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(deleteCita2);
+
+            }
+            if (nuevaCita.existsById(idCita)) {
+                nuevaCita.deleteById(idCita); // borra los datos por id
+                deleteCita2.put("mensaje", "Cita eliminada correctamente");
+                deleteCita2.put("codigo",1);
+                deleteCita2.put("status", true);
+                return ResponseEntity.status(HttpStatus.OK).body(deleteCita2);
+
+            }
+        } catch (Exception e) {
+            deleteCita2.put("status", "error");
+            deleteCita2.put("mensaje", "Error al borrar cita");
+            deleteCita2.put("codigo",3);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(deleteCita2);
+    
+        }
+
+        return ResponseEntity.ok(deleteCita2);
+
+    }
+   
+   // @CrossOrigin(origins="*")
+   // @DeleteMapping("/borrar/cita/version2/{idCita}")
+    
 }

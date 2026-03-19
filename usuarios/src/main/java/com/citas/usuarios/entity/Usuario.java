@@ -42,6 +42,10 @@ public class Usuario {
 
     @Column(name= "roll")
     private String roll;
+    @Column(name="Estado")
+    private Integer estadoUser;
+
+    public Integer getEstadoUser(){return estadoUser;}
 
     public String getUsuarioAtributo(){
         return userAtributo;
@@ -58,6 +62,7 @@ public class Usuario {
     public String getRoll() {
         return roll;
     }
+    public void setEstadoUser(Integer estadoUser){this.estadoUser=estadoUser;}
     public void setNewRoll(String roll){
         this.roll=roll;
     }

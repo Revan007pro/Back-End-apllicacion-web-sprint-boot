@@ -14,6 +14,8 @@ import com.citas.usuarios.entity.Citas;
 public interface CitaRepository extends JpaRepository<Citas, Long> {
     Citas findById(long idCita);
 
+  //  Factura buscarById(long idFactura);
+
     List<Citas> findByUsuarioNombre(String nombre);
     // Buscar por el ID de la sede
     List<Citas> findByIdSede(Integer idSede);

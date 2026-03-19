@@ -2,7 +2,9 @@ package com.citas.usuarios.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,10 +22,21 @@ public class Citas {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id_cita")
     private long idCita;
-
+ 
    @ManyToOne 
 @JoinColumn(name="id_persona", referencedColumnName ="id_persona")
-private Usuario usuario;
+private Usuario usuario; //forma para traer otros id de otras tablas
+
+
+@OneToMany(mappedBy = "citaFactu", cascade = CascadeType.ALL, orphanRemoval = true)
+private List<Factura> facturas;
+/* CascadeType.ALL,  Cualquier cosa que le pase al padre, hazle lo mismo al hijo automáticamente
+guardar,actualizar, borrar,
+orphanRemoval "Limpieza de Huérfanos "
+Si en tu código quitas una factura de la lista de facturas de la cita, Java dice: "Ah, esta factura ya no 
+tiene padre (cita), entonces ya no sirve para nada". Y la borra automáticamente de 
+la base de datos.
+ */
 
 @ManyToOne 
 @JoinColumn(name="id_empleado", referencedColumnName="id_empleado")
