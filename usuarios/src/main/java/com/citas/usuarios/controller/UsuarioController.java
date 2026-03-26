@@ -53,20 +53,24 @@ public class UsuarioController {
    // }
 
 
-   @GetMapping("consultar/{id_persona}")
-   public ResponseEntity<?>obtenerUser(@PathVariable Long id_persona){
-    Optional<Usuario> usuario=userRepository.findById(id_persona); //nota falta el repository
+   @GetMapping("/consultar/{id}")
+   public ResponseEntity<?>obtenerUser(@PathVariable Long id){
+    Optional<Usuario> usuario=userRepository.findById(id); //nota falta el repository
     Map<String,Object>respuesta=new HashMap<>();
 
     if(!usuario.isPresent()){
         respuesta.put("mensaje","El usuario no se encuentra segistrado en el sistema");
         respuesta.put("code",2);
+        
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
     }
 
     respuesta.put("mensaje","usuario obtenido correctamente");
     respuesta.put("code",1);
+    respuesta.put("datos",usuario);
     return ResponseEntity.status(HttpStatus.OK).body(respuesta);
 
    }
+
+   
 }

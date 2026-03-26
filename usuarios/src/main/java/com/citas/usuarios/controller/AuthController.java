@@ -1,5 +1,6 @@
 package com.citas.usuarios.controller;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,10 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.citas.usuarios.dto.LoginRequest;
+import com.citas.usuarios.dto.UsuarioRequest;
 import com.citas.usuarios.entity.Usuario;
 import com.citas.usuarios.repository.UsuarioRepository;
  
@@ -161,4 +164,46 @@ if (userDB.getNombre().equalsIgnoreCase(nombre) && !userDB.getPassword().equals(
             }
             
     }
+    @PutMapping("/actualizar/datos")
+    public ResponseEntity<Map<String,Object>>acutalizarDatos(@RequestBody UsuarioRequest userData){
+      Map<String,Object>datos =new HashMap<>();
+
+      Long id_persona=userData.getIdPersona();
+
+      String newNombre=userData.getNombreUser();
+      String newApellido=userData.getApellidosUser();
+      String newFechaNacimiento=userData.getFechaUser();
+      String newCorreo=userData.getCorreoUser();
+      String newPassword=userData.getContraseniaUser();
+      BigInteger newTelefono=userData.getNewTelefono();
+    
+      Usuario userDB = usuarioRepository.findById(id_persona).orElse(null);
+      if(newPassword==null || newPassword.isEmpty()){
+        datos.put("mensaje","la contraseña no puede ser nula");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(datos);
+      }
+
+     // Usuario nuevosDatos=new Usuario();
+      userDB.setNombre(newNombre);
+      userDB.setApellidos(newApellido);
+      userDB.setFechaNacmiento(newFechaNacimiento);
+      userDB.setCorreo(newCorreo);
+      userDB.setPassword(newPassword);
+      userDB.setTelefono(newTelefono);
+
+ 
+      try{
+        usuarioRepository.save(userDB);
+        datos.put("mensaje","Datos actualizados correctamente");
+    
+      }catch(Exception e){
+        datos.put("mensaje","error de origen interno");
+      }
+
+      return ResponseEntity.ok(datos);
+
+      
+
+    }
+   
 }
