@@ -42,6 +42,7 @@ public ResponseEntity <Map<String, Object>> savePost(@RequestBody SaveRequest ne
     Map<String, Object> respuesta = new HashMap<>();
 
     String roll="Cliente";
+    Integer estado=1;
 
     String newNombre = newRequest.getNewUsuario();
 // String newRoll=newRequest.getNewRoll();
@@ -74,6 +75,7 @@ public ResponseEntity <Map<String, Object>> savePost(@RequestBody SaveRequest ne
     //nuevoUsuario.setNewConfirmar(newConfirmar);
     nuevoUsuario.setTelefono(newTelefono); 
     nuevoUsuario.setNewRoll(roll); // coloca para empezar a cliente todos los nuevos usuarios
+   // nuevoUsuario.setEstadoUser(estado); cuando cree las tuplas coloque set default EStado=1 
 
 
     try {
