@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,6 @@ public class CitasController {
     @Autowired
     private EmpleadosRepository empleadoRepository;
 
- 
     @PostMapping("/guardar/cita")
     public Map<String, Object> SaveCita(@RequestBody CitasRequest newsCita) {
         Map<String, Object> Respuesta = new HashMap<>();
@@ -48,11 +48,9 @@ public class CitasController {
         Integer idCliente = newsCita.getIdCliente();
         String fechaCita = newsCita.getFecha();
         String horaInicio = newsCita.getHorainicio();
-        
 
         Empleados empleadoDB = empleadoRepository.findById(idEmpleado).orElse(null);
         Usuario usuarioDB = usuarioRepository.findById(idCliente);
-        
 
         if (newsCita.getFecha() == null || newsCita.getHorainicio() == null) {
             Respuesta.put("status", "error");
@@ -91,6 +89,74 @@ public class CitasController {
         return nuevaCita.findByUsuarioNombre(nombre);
     }
 
+    @GetMapping("mostrar/citas/estado/activo")
+    public List<Citas> mostrarCitas(@RequestParam Integer estadoCita) {
+        return nuevaCita.findByEstado(1);
+    }
+
+    /*
+     * @GetMapping("mostrar/citas/estado")
+     * public List<Citas> mostrarTodasCitas() {
+     * return nuevaCita.findAll();
+     * }
+     */
+
+    @GetMapping("mostrar/citas/estado")
+    public ResponseEntity<Map<String, Object>> mostrarTablaita() {
+        Map<String, Object> respuesta = new HashMap<>();
+        List<Citas> listaCitas = nuevaCita.findAll();
+
+        try {
+            if (listaCitas.isEmpty()) {
+                respuesta.put("code", 2);
+                respuesta.put("mensaje", "probablemente no hay registros en la base de datos");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
+            }
+            respuesta.put("code", 1);
+            respuesta.put("data", listaCitas);
+            respuesta.put("mensaje", "las citas son");
+            return ResponseEntity.status(HttpStatus.OK).body(respuesta);
+
+        } catch (Exception err) {
+            respuesta.put("mensaje", "error interno");
+            respuesta.put("code", 3);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping("cancelar/citas/{idCita}")
+    public ResponseEntity<Map<String, Object>> cancelarCita(@PathVariable Long idCita) {
+        Map<String, Object> respuesta = new HashMap<>();
+        Optional<Citas> citasDB = nuevaCita.findById(idCita);
+        try {
+            if (!citasDB.isPresent()) {
+                respuesta.put("code", 2);
+                respuesta.put("mensaje", "probablemente no hay registros en la base de datos");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
+            }
+            Citas cita = citasDB.get();
+            cita.setEStadoCita(3);
+            respuesta.put("codigo", 1);
+            nuevaCita.save(cita);
+            respuesta.put("data", cita);
+            return ResponseEntity.ok(respuesta);
+        } catch (Exception e) {
+            respuesta.put("codigo", 3);
+            respuesta.put("mensaje", "error en el servidor");
+            return ResponseEntity.badRequest().body(respuesta);
+        }
+
+    }
+
+    // @GetMapping("mostrar/citas/estado")
+    // public ResponseEntity<List<Creturn ResponseEntity.status(HttpStatus.OK)itas>>
+    // mostrarCitas(@RequestParam Integer
+    // estadoCita) {
+    // return ResponseEntity
+    // .status(HttpStatus.OK)
+    // .body(nuevaCita.findByEstado(estadoCita));
+    // }
     /*
      * @GetMapping("citas/usuario/{idPersona}")
      * public List<Citas> listarCitasPorUsuario(@PathVariable Long idPersona) {
@@ -98,7 +164,6 @@ public class CitasController {
      * }
      */
 
-    @CrossOrigin(origins = "http://localhost:4321")
     @GetMapping("/estado-empleados")
     public List<EmpleadoCita> obtenerEstado() { // retorna todos los empleados quienes tienen cita
         return nuevaCita.listarEstadoEmpleados();
@@ -121,67 +186,73 @@ public class CitasController {
 
         return ResponseEntity.ok(citas);
     }
+
     @CrossOrigin(origins = "http://localhost:4321")
     @GetMapping("/citas/mostrar/cliente/{idPersona}")
     public ResponseEntity<List<Citas>> listarCitasCliente(@PathVariable Integer idPersona) {
         List<Citas> citasCliente = nuevaCita.buscarCitasCliente(idPersona);
         return ResponseEntity.ok(citasCliente);
-    } 
-
-/*  @CrossOrigin(origins="*")
-@PutMapping("/reprogramar/cita/cliente/{idCita}")
-public ResponseEntity<Map<String, String>> reprogramarCitas(@PathVariable Integer idCita) {
-
-    Map<String, String> response = new HashMap<>();
-    response.put("mensaje", "Mando este mensaje desde el backend"); solo para verificar
-
-    return ResponseEntity.ok(response);
-} */
-
-@CrossOrigin(origins="*")
-@PutMapping("/reprogramar/cita/cliente/{idCita}")
-public Map<String, Object> reprogramarCitas(@PathVariable Long idCita, @RequestBody CitasReprogramar reproCita) {
-
-    Map<String, Object> response = new HashMap<>();
-
-    if (reproCita == null) {
-        response.put("status", "error");
-        response.put("mensaje", "no se recibieron datos.");
-        return response;
     }
 
-    String newFecha = reproCita.getFecha();
-    String horaR = reproCita.getHorainicio();
+    /*
+     * @CrossOrigin(origins="*")
+     * 
+     * @PutMapping("/reprogramar/cita/cliente/{idCita}")
+     * public ResponseEntity<Map<String, String>> reprogramarCitas(@PathVariable
+     * Integer idCita) {
+     * 
+     * Map<String, String> response = new HashMap<>();
+     * response.put("mensaje", "Mando este mensaje desde el backend"); solo para
+     * verificar
+     * 
+     * return ResponseEntity.ok(response);
+     * }
+     */
 
-    if (newFecha == null || horaR == null) {
-        response.put("status", "error");
-        response.put("mensaje", "La fecha o la hora no pueden estar vacías.");
-        return response;
-    }
+    @CrossOrigin(origins = "*")
+    @PutMapping("/reprogramar/cita/cliente/{idCita}")
+    public Map<String, Object> reprogramarCitas(@PathVariable Long idCita, @RequestBody CitasReprogramar reproCita) {
 
-    return nuevaCita.findById(idCita).map(citaExistente -> {
-        try {
-            citaExistente.setFechaCita(LocalDate.parse(newFecha));
-            citaExistente.sethoraInicioCita(LocalTime.parse(horaR));
+        Map<String, Object> response = new HashMap<>();
 
-            nuevaCita.save(citaExistente);
-
-            response.put("status", "ok");
-            response.put("mensaje", "Cita reprogramada correctamente");
-            return response;
-
-        } catch (Exception e) {
+        if (reproCita == null) {
             response.put("status", "error");
-            response.put("mensaje", "Error al parsear fecha/hora: " + e.getMessage());
+            response.put("mensaje", "no se recibieron datos.");
             return response;
         }
 
-    }).orElseGet(() -> {
-        response.put("status", "error");
-        response.put("mensaje", "La cita con ID " + idCita + " no existe.");
-        return response;
-    });
-}
+        String newFecha = reproCita.getFecha();
+        String horaR = reproCita.getHorainicio();
+
+        if (newFecha == null || horaR == null) {
+            response.put("status", "error");
+            response.put("mensaje", "La fecha o la hora no pueden estar vacías.");
+            return response;
+        }
+
+        return nuevaCita.findById(idCita).map(citaExistente -> {
+            try {
+                citaExistente.setFechaCita(LocalDate.parse(newFecha));
+                citaExistente.sethoraInicioCita(LocalTime.parse(horaR));
+
+                nuevaCita.save(citaExistente);
+
+                response.put("status", "ok");
+                response.put("mensaje", "Cita reprogramada correctamente");
+                return response;
+
+            } catch (Exception e) {
+                response.put("status", "error");
+                response.put("mensaje", "Error al parsear fecha/hora: " + e.getMessage());
+                return response;
+            }
+
+        }).orElseGet(() -> {
+            response.put("status", "error");
+            response.put("mensaje", "La cita con ID " + idCita + " no existe.");
+            return response;
+        });
+    }
 
     @GetMapping("citas/mostrar/hora")
     public List<Citas> mortrarHora(@RequestParam String hora) {
@@ -201,14 +272,14 @@ public Map<String, Object> reprogramarCitas(@PathVariable Long idCita, @RequestB
         try {
             if (!nuevaCita.existsById(idCita)) {
                 deleteCita.put("mensaje", "error la cita no ha sido encontrada");
-                deleteCita.put("codigo",2);
+                deleteCita.put("codigo", 2);
                 deleteCita.put("status", false);
                 return deleteCita;
             }
             if (nuevaCita.existsById(idCita)) {
                 nuevaCita.deleteById(idCita); // borra los datos por id
                 deleteCita.put("mensaje", "Cita eliminada correctamente");
-                deleteCita.put("codigo",1);
+                deleteCita.put("codigo", 1);
                 deleteCita.put("status", true);
                 return deleteCita;
             }
@@ -222,14 +293,14 @@ public Map<String, Object> reprogramarCitas(@PathVariable Long idCita, @RequestB
 
     }
 
-     @PutMapping("/citas/borrar/vesion2/{idCita}")
-    public ResponseEntity <Map<String, Object>> borrarCitaV2(@RequestParam long idCita) {
+    @PutMapping("/citas/borrar/vesion2/{idCita}")
+    public ResponseEntity<Map<String, Object>> borrarCitaV2(@RequestParam long idCita) {
         Map<String, Object> deleteCita2 = new HashMap<>();
 
         try {
             if (!nuevaCita.existsById(idCita)) {
                 deleteCita2.put("mensaje", "error la cita no ha sido encontrada");
-                deleteCita2.put("codigo",2);
+                deleteCita2.put("codigo", 2);
                 deleteCita2.put("status", false);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(deleteCita2);
 
@@ -237,7 +308,7 @@ public Map<String, Object> reprogramarCitas(@PathVariable Long idCita, @RequestB
             if (nuevaCita.existsById(idCita)) {
                 nuevaCita.deleteById(idCita); // borra los datos por id
                 deleteCita2.put("mensaje", "Cita eliminada correctamente");
-                deleteCita2.put("codigo",1);
+                deleteCita2.put("codigo", 1);
                 deleteCita2.put("status", true);
                 return ResponseEntity.status(HttpStatus.OK).body(deleteCita2);
 
@@ -245,16 +316,16 @@ public Map<String, Object> reprogramarCitas(@PathVariable Long idCita, @RequestB
         } catch (Exception e) {
             deleteCita2.put("status", "error");
             deleteCita2.put("mensaje", "Error al borrar cita");
-            deleteCita2.put("codigo",3);
+            deleteCita2.put("codigo", 3);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(deleteCita2);
-    
+
         }
 
         return ResponseEntity.ok(deleteCita2);
 
     }
-   
-   // @CrossOrigin(origins="*")
-   // @DeleteMapping("/borrar/cita/version2/{idCita}")
-    
+
+    // @CrossOrigin(origins="*")
+    // @DeleteMapping("/borrar/cita/version2/{idCita}")
+
 }

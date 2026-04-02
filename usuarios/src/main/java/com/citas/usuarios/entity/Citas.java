@@ -16,96 +16,98 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="Cita")
+@Table(name = "Cita")
 public class Citas {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="id_cita")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_cita")
     private long idCita;
- 
-   @ManyToOne 
-@JoinColumn(name="id_persona", referencedColumnName ="id_persona")
-private Usuario usuario; //forma para traer otros id de otras tablas
 
+    @ManyToOne
+    @JoinColumn(name = "id_persona", referencedColumnName = "id_persona")
+    private Usuario usuario; // forma para traer otros id de otras tablas
 
-@OneToMany(mappedBy = "citaFactu", cascade = CascadeType.ALL, orphanRemoval = true)
-private List<Factura> facturas;
-/* CascadeType.ALL,  Cualquier cosa que le pase al padre, hazle lo mismo al hijo automáticamente
-guardar,actualizar, borrar,
-orphanRemoval "Limpieza de Huérfanos "
-Si en tu código quitas una factura de la lista de facturas de la cita, Java dice: "Ah, esta factura ya no 
-tiene padre (cita), entonces ya no sirve para nada". Y la borra automáticamente de 
-la base de datos.
- */
+    @OneToMany(mappedBy = "citaFactu", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Factura> facturas;
+    /*
+     * CascadeType.ALL, Cualquier cosa que le pase al padre, hazle lo mismo al hijo
+     * automáticamente
+     * guardar,actualizar, borrar,
+     * orphanRemoval "Limpieza de Huérfanos "
+     * Si en tu código quitas una factura de la lista de facturas de la cita, Java
+     * dice: "Ah, esta factura ya no
+     * tiene padre (cita), entonces ya no sirve para nada". Y la borra
+     * automáticamente de
+     * la base de datos.
+     */
 
-@ManyToOne 
-@JoinColumn(name="id_empleado", referencedColumnName="id_empleado")
-private Empleados empleado;
+    @ManyToOne
+    @JoinColumn(name = "id_empleado", referencedColumnName = "id_empleado") // forma para mapear tablas forraneas
+    private Empleados empleado;
 
+    @Column(name = "id_sede")
+    private Integer idSede;
 
-    @Column(name="id_sede")
-private Integer idSede;
-
-
+    @Column(name = "Estado")
+    private Integer estado;
 
     public void setIdSede(Integer idSede) {
-    this.idSede = idSede;
-}
+        this.idSede = idSede;
+    }
 
-
-    @Column(name="fecha")
+    @Column(name = "fecha")
     private LocalDate citaFecha;
 
-
-    @Column(name="hora_cita")
+    @Column(name = "hora_cita")
     private LocalTime horaInicio;
 
+    public Integer getEstadoCita() {
+        return estado;
+    }
 
-
-    public long getIdCita(){
+    public long getIdCita() {
         return idCita;
 
     }
 
-
-    public Usuario getUsuarioCita(){
+    public Usuario getUsuarioCita() {
         return usuario;
     }
 
-    public Empleados getEmpleadosCita(){
+    public Empleados getEmpleadosCita() {
         return empleado;
     }
 
-    public LocalDate getFechaCita(){
+    public LocalDate getFechaCita() {
         return citaFecha;
     }
 
-    public LocalTime getHoraInicio(){
+    public LocalTime getHoraInicio() {
         return horaInicio;
     }
 
-
-    public void setIdCita(long idCita){
-        this.idCita=idCita;
+    public void setEStadoCita(Integer estado) {
+        this.estado = estado;
     }
 
-
-    public void setUsuarioCita(Usuario usuario){
-        this.usuario=usuario;
+    public void setIdCita(long idCita) {
+        this.idCita = idCita;
     }
 
-    public void setEmpleadoCita(Empleados empleado){
-        this.empleado=empleado;
+    public void setUsuarioCita(Usuario usuario) {
+        this.usuario = usuario;
     }
 
-    public void setFechaCita(LocalDate citaFecha){
-        this.citaFecha=citaFecha;
+    public void setEmpleadoCita(Empleados empleado) {
+        this.empleado = empleado;
     }
 
-    public void sethoraInicioCita(LocalTime horaInicio){
-        this.horaInicio=horaInicio;
+    public void setFechaCita(LocalDate citaFecha) {
+        this.citaFecha = citaFecha;
     }
 
-
+    public void sethoraInicioCita(LocalTime horaInicio) {
+        this.horaInicio = horaInicio;
+    }
 
 }

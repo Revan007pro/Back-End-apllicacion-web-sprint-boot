@@ -8,20 +8,19 @@ public class CitasRequest {
 
     private String especialidad;
     private Integer idCliente;
-    
+    private Integer estado;
 
     @JsonProperty("nombreEespecialista")
     private String nombreEspecialista;
-   // private String nombreSede;
+    // private String nombreSede;
     private String fecha;
     private Integer sedeId;
 
     private Long idEmpleado;
 
-public Long getIdEmpleado() {
-    return idEmpleado;
-}
-
+    public Long getIdEmpleado() {
+        return idEmpleado;
+    }
 
     @JsonProperty("horaInicio")
     private String horaInicio;
@@ -29,7 +28,11 @@ public Long getIdEmpleado() {
     @JsonProperty("horaFinal")
     private String horaFinal;
 
-    public long getId(){
+    public Integer getEStadoCita() {
+        return estado;
+    }
+
+    public long getId() {
         return id;
     }
 
@@ -42,14 +45,18 @@ public Long getIdEmpleado() {
     }
 
     public String getNombreEspecialista() {
-    return nombreEspecialista;
-}
+        return nombreEspecialista;
+    }
 
-    public Integer getSedeId(){return sedeId;}
+    public Integer getSedeId() {
+        return sedeId;
+    }
 
-  /*   public String getNombreSede() {
-        return nombreSede;
-    } */
+    /*
+     * public String getNombreSede() {
+     * return nombreSede;
+     * }
+     */
 
     public String getFecha() {
         return fecha;
@@ -63,39 +70,45 @@ public Long getIdEmpleado() {
         return horaFinal;
     }
 
-    public void setIdCita(long id){
-        this.id=id;
+    public void setIdCita(long id) {
+        this.id = id;
     }
 
-    public void setIdSede(Integer sedeId){
-        this.sedeId=sedeId;
+    public void setEStadoCita(Integer estado) {
+        this.estado = estado;
+    }
+
+    public void setIdSede(Integer sedeId) {
+        this.sedeId = sedeId;
     }
 
     public void setIdEmpleado(Long idEmpleado) {
-    this.idEmpleado = idEmpleado;
-}
-
-    public void setEspecialidadCita(String especialidad){
-        this.especialidad=especialidad;
+        this.idEmpleado = idEmpleado;
     }
 
-    public void setIdClienteCita(Integer idCliente){
-        this.idCliente=idCliente;
+    public void setEspecialidadCita(String especialidad) {
+        this.especialidad = especialidad;
     }
 
-/*     public void setNombreSedeCita(String nombreSede){
-        this.nombreSede=nombreSede;
-    } */
-
-    public void setfechaCita(String fecha){
-        this.fecha=fecha;
+    public void setIdClienteCita(Integer idCliente) {
+        this.idCliente = idCliente;
     }
 
-    public void setHoraInicioCita(String horaInicio){
-        this.horaInicio=horaInicio;
+    /*
+     * public void setNombreSedeCita(String nombreSede){
+     * this.nombreSede=nombreSede;
+     * }
+     */
+
+    public void setfechaCita(String fecha) {
+        this.fecha = fecha;
     }
 
-    public void setHoraFinalCita(String horaFinal){
-        this.horaFinal=horaFinal;
+    public void setHoraInicioCita(String horaInicio) {
+        this.horaInicio = horaInicio;
+    }
+
+    public void setHoraFinalCita(String horaFinal) {
+        this.horaFinal = horaFinal;
     }
 }
