@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.citas.usuarios.dto.LoginRequest;
 import com.citas.usuarios.dto.UsuarioRequest;
+import com.citas.usuarios.entity.Empleados;
 import com.citas.usuarios.entity.Usuario;
+import com.citas.usuarios.repository.EmpleadosRepository;
 import com.citas.usuarios.repository.UsuarioRepository;
 
 @RestController
@@ -28,6 +30,9 @@ public class AuthController {
 
     @Autowired
     public UsuarioRepository usuarioRepository;
+
+    @Autowired
+    public EmpleadosRepository empRepo;
 
     @PostMapping("/login")
     public Map<String, Object> loginPost(@RequestBody LoginRequest request) {
@@ -51,7 +56,9 @@ public class AuthController {
             if (userDB.getRoll().equalsIgnoreCase("Administrador")) {
                 respuesta.put("urlTarget", "/Administrador");
             } else if (userDB.getUsuarioAtributo().equalsIgnoreCase("Empleado")) {
+
                 respuesta.put("urlTarget", "/empleado");
+
             } else {
                 respuesta.put("urlTarget", "/dashboard_usuario");
 
@@ -122,11 +129,16 @@ public class AuthController {
                 respuesta2.put("Code", 1);
                 respuesta2.put(Key, Value + userDB.getNombre());
                 return ResponseEntity.status(HttpStatus.FOUND).body(respuesta2);
-            } else if (userDB.getRoll().equalsIgnoreCase("Empleado")) {
+            } else if (userDB.getUsuarioAtributo().equalsIgnoreCase("Empleado")) {
+
+                Empleados emp = empRepo.findByUsuario(userDB); // se toma toda la entidad
+
+                respuesta2.put("idEmpleado", emp.getIdEmpleado()); // se devuelve el dato requerido
                 respuesta2.put("urlTarget", "/empleado");
                 respuesta2.put("Code", 1);
                 respuesta2.put(Key, Value + userDB.getNombre());
                 return ResponseEntity.status(HttpStatus.FOUND).body(respuesta2);
+
             } else {
                 respuesta2.put("urlTarget", "/dashboard_usuario");
                 respuesta2.put("Code", 1);

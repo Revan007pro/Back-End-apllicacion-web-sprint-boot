@@ -30,7 +30,9 @@ import com.citas.usuarios.repository.EmpleadosRepository;
 import com.citas.usuarios.repository.UsuarioRepository;
 
 @RestController
-@CrossOrigin(origins = "*") // cualquiera en el front puede acceder a esta api
+// @CrossOrigin(origins = "*") // cualquiera en el front puede acceder a esta
+// api
+@CrossOrigin(origins = "*")
 public class CitasController {
     @Autowired
     private CitaRepository nuevaCita;
@@ -266,7 +268,7 @@ public class CitasController {
     }
 
     @PutMapping("/citas/borrar/{idCita}")
-    public Map<String, Object> borrarCita(@RequestParam long idCita) {
+    public Map<String, Object> borrarCita(@PathVariable long idCita) {
         Map<String, Object> deleteCita = new HashMap<>();
 
         try {

@@ -1,4 +1,4 @@
- package com.citas.usuarios.controller;
+package com.citas.usuarios.controller;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,17 +11,18 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityMode {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf->csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()
-            );
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> {
+                })
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll());
         return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
