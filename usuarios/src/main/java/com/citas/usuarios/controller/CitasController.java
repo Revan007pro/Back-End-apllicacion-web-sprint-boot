@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.crypto.SecretKey;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +31,10 @@ import com.citas.usuarios.entity.Usuario;
 import com.citas.usuarios.repository.CitaRepository;
 import com.citas.usuarios.repository.EmpleadosRepository;
 import com.citas.usuarios.repository.UsuarioRepository;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
 @RestController
 // @CrossOrigin(origins = "*") // cualquiera en el front puede acceder a esta
@@ -50,6 +57,7 @@ public class CitasController {
         Integer idCliente = newsCita.getIdCliente();
         String fechaCita = newsCita.getFecha();
         String horaInicio = newsCita.getHorainicio();
+        Integer estadoCita = newsCita.getEStadoCita();
 
         Empleados empleadoDB = empleadoRepository.findById(idEmpleado).orElse(null);
         Usuario usuarioDB = usuarioRepository.findById(idCliente);
@@ -64,6 +72,7 @@ public class CitasController {
         citaNueva.setIdSede(newsCita.getSedeId());
         citaNueva.setUsuarioCita(usuarioDB);
         citaNueva.setEmpleadoCita(empleadoDB);
+        citaNueva.setEStadoCita(1);
 
         citaNueva.setFechaCita(LocalDate.parse(fechaCita));
         citaNueva.sethoraInicioCita(LocalTime.parse(horaInicio));
@@ -79,6 +88,54 @@ public class CitasController {
             return Respuesta;
         }
 
+    }
+
+    @PostMapping("guardar/cita/vesion2")
+    public ResponseEntity<Map<String, Object>> guardarCita(@RequestBody CitasRequest newsCita2) {
+        Map<String, Object> respuesta = new HashMap<>();
+        Long idEmpleado = newsCita2.getIdEmpleado();
+        Integer idCliente = newsCita2.getIdCliente();
+        String fechaCita = newsCita2.getFecha();
+        String horaInicio = newsCita2.getHorainicio();
+        Integer estadoCita = newsCita2.getEStadoCita();
+
+        Empleados empleadoDB = empleadoRepository.findById(idEmpleado).orElse(null);
+        Usuario usuarioDB = usuarioRepository.findById(idCliente);
+
+        if (newsCita2.getIdEmpleado() == null) {
+            respuesta.put("mensaje", "La cita no puede estar sin especialista");
+            respuesta.put("codigo", 2);
+            return ResponseEntity.badRequest().body(respuesta);
+        }
+        if (newsCita2.getIdCliente() == null) {
+            respuesta.put("mensaje", "El usuario no esta en la base de datos");
+            respuesta.put("codigo", 3);
+            return ResponseEntity.badRequest().body(respuesta);
+        }
+        if (newsCita2.getFecha() == null || newsCita2.getFecha().isEmpty() ||
+                newsCita2.getHorainicio() == null || newsCita2.getHorainicio().isEmpty()) {
+            respuesta.put("mensaje", "La cita debe te tener una fecha para ser agendada");
+            respuesta.put("codigo", 4);
+            return ResponseEntity.badRequest().body(respuesta);
+        }
+
+        Citas nuevaCita2 = new Citas();
+        nuevaCita2.setIdSede(newsCita2.getSedeId()); // se debe colocar la sede porque en la bd esta no null
+        nuevaCita2.setUsuarioCita(usuarioDB);
+        nuevaCita2.setEmpleadoCita(empleadoDB);
+        nuevaCita2.setEStadoCita(1);
+
+        nuevaCita2.setFechaCita(LocalDate.parse(fechaCita));
+        nuevaCita2.sethoraInicioCita(LocalTime.parse(horaInicio));
+
+        try {
+            nuevaCita.save(nuevaCita2);
+            respuesta.put("mensaje", "Exito al guardar su cita");
+            return ResponseEntity.status(HttpStatus.OK).body(respuesta);
+        } catch (Exception e) {
+            respuesta.put("mensaja", "Servidor no response bien");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);
+        }
     }
 
     @GetMapping("citas/mostrar")
@@ -186,6 +243,27 @@ public class CitasController {
 
         List<Citas> citas = nuevaCita.buscarCitasPorEmpleado(idEmpleado);
 
+        return ResponseEntity.ok(citas);
+    }
+
+    @GetMapping("/citas/mostrar/empleado")
+    public ResponseEntity<List<Citas>> listarCitasEmpleado(@RequestHeader("Authorization") String token) {
+
+        String jwt = token.substring(7);
+
+        SecretKey key = Keys.hmacShaKeyFor("mi_clave_super_secreta_1234567890123456".getBytes());
+
+        Claims claims = Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(jwt)
+                .getPayload(); // En las versiones nuevas getBody() es getPayload()
+
+        // Integer idEmpleado = Integer.parseInt(claims.getSubject());
+        Integer idUsuario = Integer.parseInt(claims.getSubject());
+
+        List<Citas> citas = nuevaCita.buscarCitasPorUsuarioEmpleado(idUsuario);
+        System.out.println("ID del token: " + idUsuario);
         return ResponseEntity.ok(citas);
     }
 

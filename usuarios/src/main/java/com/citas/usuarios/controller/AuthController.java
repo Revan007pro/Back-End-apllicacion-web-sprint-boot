@@ -1,6 +1,8 @@
 package com.citas.usuarios.controller;
 
 import java.math.BigInteger;
+import java.security.Key;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,10 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.citas.usuarios.dto.LoginRequest;
 import com.citas.usuarios.dto.UsuarioRequest;
-import com.citas.usuarios.entity.Empleados;
 import com.citas.usuarios.entity.Usuario;
 import com.citas.usuarios.repository.EmpleadosRepository;
 import com.citas.usuarios.repository.UsuarioRepository;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -81,6 +85,7 @@ public class AuthController {
         String Value = "Bienvenido ";
 
         Usuario userDB = usuarioRepository.findByNombre(nombre);
+
         if ((nombre == null || nombre.isEmpty()) && (password == null || password.isEmpty())) {
             respuesta2.put("mensaje", "Debe ingresar datos para poder ingresar");
             respuesta2.put("Code", 2);
@@ -115,9 +120,19 @@ public class AuthController {
             respuesta2.put("Code", 5);
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(respuesta2);
         }
+        Key key = Keys.hmacShaKeyFor("mi_clave_super_secreta_1234567890123456".getBytes());
+
+        String token = Jwts.builder()
+                .subject(String.valueOf(userDB.getId()))
+                .claim("roll", userDB.getRoll())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 86400000))
+                .signWith(key)
+                .compact();
         if (userDB.getNombre().equalsIgnoreCase(nombre) && userDB.getPassword().equalsIgnoreCase(password)) {
             respuesta2.put("mensaje", "Bienvenido al sistema");
             respuesta2.put("roll", userDB.getRoll());
+            respuesta2.put("token", token);
             respuesta2.put("nombre", userDB.getNombre());
             respuesta2.put("correo", userDB.getCorreo());
             respuesta2.put("telefono", userDB.getTelefono());
@@ -128,22 +143,23 @@ public class AuthController {
                 respuesta2.put("urlTarget", "/Administrador");
                 respuesta2.put("Code", 1);
                 respuesta2.put(Key, Value + userDB.getNombre());
-                return ResponseEntity.status(HttpStatus.FOUND).body(respuesta2);
-            } else if (userDB.getUsuarioAtributo().equalsIgnoreCase("Empleado")) {
-
-                Empleados emp = empRepo.findByUsuario(userDB); // se toma toda la entidad
-
-                respuesta2.put("idEmpleado", emp.getIdEmpleado()); // se devuelve el dato requerido
-                respuesta2.put("urlTarget", "/empleado");
-                respuesta2.put("Code", 1);
-                respuesta2.put(Key, Value + userDB.getNombre());
-                return ResponseEntity.status(HttpStatus.FOUND).body(respuesta2);
-
-            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(respuesta2);
+            } else if (userDB.getRoll().equalsIgnoreCase("Cliente")) {
                 respuesta2.put("urlTarget", "/dashboard_usuario");
                 respuesta2.put("Code", 1);
                 respuesta2.put(Key, Value + userDB.getNombre());
-                return ResponseEntity.status(HttpStatus.FOUND).body(respuesta2);
+                return ResponseEntity.status(HttpStatus.OK).body(respuesta2);
+
+            } else if (userDB.getUsuarioAtributo().equalsIgnoreCase("Empleado")) {
+
+                // Empleados emp = empRepo.findByUsuario(userDB); // se toma toda la entidad
+
+                // respuesta2.put("idEmpleado", emp.getIdEmpleado()); // se devuelve el dato
+                // requerido
+                respuesta2.put("urlTarget", "/empleado");
+                respuesta2.put("Code", 1);
+                respuesta2.put(Key, Value + userDB.getNombre());
+                return ResponseEntity.status(HttpStatus.OK).body(respuesta2);
 
             }
         }
