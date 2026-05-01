@@ -12,13 +12,13 @@ import com.citas.usuarios.entity.Empleados;
 import com.citas.usuarios.repository.EmpleadosRepository;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4321")
+@CrossOrigin(origins = "*")
 @RequestMapping("/usuario/empleados")
 public class EmpleadosController {
 
     @Autowired
     private EmpleadosRepository empleadoRepository;
-    
+
     @GetMapping
     public List<Empleados> listar() {
         return empleadoRepository.findAll();

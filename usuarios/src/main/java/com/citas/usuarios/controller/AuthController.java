@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +38,8 @@ public class AuthController {
 
     @Autowired
     public EmpleadosRepository empRepo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public Map<String, Object> loginPost(@RequestBody LoginRequest request) {
@@ -109,17 +112,27 @@ public class AuthController {
             respuesta2.put("Code", 3);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(respuesta2);
         }
+
+        if (!passwordEncoder.matches(password, userDB.getPassword())) {
+            respuesta2.put("mensaje", "contraseña no valida");
+            respuesta2.put("Code", 5);
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(respuesta2);
+        }
+
         if (userDB.getEstadoUser() == 0) {
             respuesta2.put("mensaje", "Usuario inabilitado por favor contactese con el administrador");
             respuesta2.put("Code", 7);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(respuesta2);
         }
 
-        if (userDB.getNombre().equalsIgnoreCase(nombre) && !userDB.getPassword().equals(password)) {
-            respuesta2.put("mensaje", "contraseña no valida");
-            respuesta2.put("Code", 5);
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(respuesta2);
-        }
+        /*
+         * if (userDB.getNombre().equalsIgnoreCase(nombre) &&
+         * !userDB.getPassword().equals(password)) {
+         * respuesta2.put("mensaje", "contraseña no valida");
+         * respuesta2.put("Code", 5);
+         * return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(respuesta2);
+         * }
+         */
         Key key = Keys.hmacShaKeyFor("mi_clave_super_secreta_1234567890123456".getBytes());
 
         String token = Jwts.builder()
@@ -129,7 +142,10 @@ public class AuthController {
                 .expiration(new Date(System.currentTimeMillis() + 86400000))
                 .signWith(key)
                 .compact();
-        if (userDB.getNombre().equalsIgnoreCase(nombre) && userDB.getPassword().equalsIgnoreCase(password)) {
+        // if (userDB.getNombre().equalsIgnoreCase(nombre) &&
+        // userDB.getPassword().equalsIgnoreCase(password)) {
+        if (userDB.getNombre().equalsIgnoreCase(nombre) &&
+                passwordEncoder.matches(password, userDB.getPassword())) {
             respuesta2.put("mensaje", "Bienvenido al sistema");
             respuesta2.put("roll", userDB.getRoll());
             respuesta2.put("token", token);
@@ -218,7 +234,7 @@ public class AuthController {
         userDB.setFechaNacmiento(newFechaNacimiento);
         userDB.setCorreo(newCorreo);
         userDB.setNewRoll(newRoll);
-        userDB.setPassword(newPassword);
+        userDB.setPassword(passwordEncoder.encode(newPassword));
         userDB.setTelefono(newTelefono);
 
         try {

@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.crypto.SecretKey;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,10 +30,6 @@ import com.citas.usuarios.repository.CitaRepository;
 import com.citas.usuarios.repository.EmpleadosRepository;
 import com.citas.usuarios.repository.UsuarioRepository;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-
 @RestController
 // @CrossOrigin(origins = "*") // cualquiera en el front puede acceder a esta
 // api
@@ -47,6 +41,9 @@ public class CitasController {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private EmpleadosRepository empleadoRepository;
+
+    @Autowired
+    private TokenController tokenjwt;
 
     @PostMapping("/guardar/cita")
     public Map<String, Object> SaveCita(@RequestBody CitasRequest newsCita) {
@@ -223,7 +220,7 @@ public class CitasController {
      * }
      */
 
-    @GetMapping("/estado-empleados")
+    @GetMapping("/estado/empleados")
     public List<EmpleadoCita> obtenerEstado() { // retorna todos los empleados quienes tienen cita
         return nuevaCita.listarEstadoEmpleados();
     }
@@ -241,7 +238,7 @@ public class CitasController {
     @GetMapping("/citas/mostrar/empleado/{idEmpleado}")
     public ResponseEntity<List<Citas>> listarCitasEmpleado(@PathVariable Integer idEmpleado) {
 
-        List<Citas> citas = nuevaCita.buscarCitasPorEmpleado(idEmpleado);
+        List<Citas> citas = nuevaCita.buscarCitasPorUsuarioEmpleado(idEmpleado);
 
         return ResponseEntity.ok(citas);
     }
@@ -249,18 +246,23 @@ public class CitasController {
     @GetMapping("/citas/mostrar/empleado")
     public ResponseEntity<List<Citas>> listarCitasEmpleado(@RequestHeader("Authorization") String token) {
 
-        String jwt = token.substring(7);
+        /*
+         * String jwt = token.substring(7);
+         * 
+         * SecretKey key =
+         * Keys.hmacShaKeyFor("mi_clave_super_secreta_1234567890123456".getBytes());
+         * 
+         * Claims claims = Jwts.parser()
+         * .verifyWith(key)
+         * .build()
+         * .parseSignedClaims(jwt)
+         * .getPayload(); // En las versiones nuevas getBody() es getPayload()
+         * 
+         * // Integer idEmpleado = Integer.parseInt(claims.getSubject());
+         * Integer idUsuario = Integer.parseInt(claims.getSubject());
+         */ // se cambio por una clase controler
 
-        SecretKey key = Keys.hmacShaKeyFor("mi_clave_super_secreta_1234567890123456".getBytes());
-
-        Claims claims = Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(jwt)
-                .getPayload(); // En las versiones nuevas getBody() es getPayload()
-
-        // Integer idEmpleado = Integer.parseInt(claims.getSubject());
-        Integer idUsuario = Integer.parseInt(claims.getSubject());
+        Integer idUsuario = tokenjwt.extraerIdUsuario(token);
 
         List<Citas> citas = nuevaCita.buscarCitasPorUsuarioEmpleado(idUsuario);
         System.out.println("ID del token: " + idUsuario);
@@ -268,11 +270,25 @@ public class CitasController {
     }
 
     @CrossOrigin(origins = "http://localhost:4321")
-    @GetMapping("/citas/mostrar/cliente/{idPersona}")
-    public ResponseEntity<List<Citas>> listarCitasCliente(@PathVariable Integer idPersona) {
-        List<Citas> citasCliente = nuevaCita.buscarCitasCliente(idPersona);
-        return ResponseEntity.ok(citasCliente);
+    @GetMapping("/citas/mostrar/cliente")
+    public ResponseEntity<List<Citas>> listarCitasCliente(@RequestHeader("Authorization") String token) {
+        Integer idUsuario = tokenjwt.extraerIdUsuario(token);
+        List<Citas> citas = nuevaCita.buscarCitasCliente(idUsuario);
+        System.out.println("ID del token: " + idUsuario);
+        return ResponseEntity.ok(citas);
+
     }
+
+    /*
+     * @CrossOrigin(origins = "*")
+     * 
+     * @GetMapping("/citas/mostrar/cliente/{idPersona}")
+     * public ResponseEntity<List<Citas>> listarCitasCliente(@PathVariable Integer
+     * idPersona) {
+     * List<Citas> citasCliente = nuevaCita.buscarCitasCliente(idPersona);
+     * return ResponseEntity.ok(citasCliente); // version uno
+     * }
+     */
 
     /*
      * @CrossOrigin(origins="*")

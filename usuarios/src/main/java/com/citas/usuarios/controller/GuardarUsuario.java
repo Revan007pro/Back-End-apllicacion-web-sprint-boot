@@ -69,6 +69,7 @@ public class GuardarUsuario {
         nuevoUsuario.setTelefono(newTelefono);
         nuevoUsuario.setNewRoll(roll); // coloca para empezar a cliente todos los nuevos usuarios
         nuevoUsuario.setEstadoUser(1);
+        nuevoUsuario.setUuserAtritubi(roll);
 
         try {
             newusuarioRepository.save(nuevoUsuario);
@@ -81,7 +82,7 @@ public class GuardarUsuario {
     }
 
     @CrossOrigin(origins = "*")
-    @PostMapping("/guardar/usuario/version2")
+    @PostMapping("guardar/usuario/version2")
     public ResponseEntity<Map<String, Object>> respuestaSave(@RequestBody SaveRequest newSave) {
         Map<String, Object> userSave2 = new HashMap<>();
 
@@ -160,6 +161,7 @@ public class GuardarUsuario {
         usuarioSave2.setTelefono(newTelefono);
         usuarioSave2.setNewRoll(roll);
         usuarioSave2.setEstadoUser(1);
+        usuarioSave2.setUuserAtritubi(roll);
         try {
             newusuarioRepository.save(usuarioSave2);
             userSave2.put("code", "1");

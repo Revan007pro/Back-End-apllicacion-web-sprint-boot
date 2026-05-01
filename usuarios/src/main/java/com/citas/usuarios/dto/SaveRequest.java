@@ -15,6 +15,11 @@ public class SaveRequest {
     public String confirmar_new_contrasenia;
     public BigInteger new_telefono;
     public Integer newEstado;
+    public String newUsuario;
+
+    public String getAtributoUsuario() {
+        return newUsuario;
+    }
 
     public Integer getEstadoSave() {
         return newEstado;
@@ -86,6 +91,10 @@ public class SaveRequest {
 
     public void setEstadoSave(Integer newEstado) {
         this.newEstado = newEstado;
+    }
+
+    public void setAtributoUsuario(String newUsuario) {
+        this.newUsuario = newUsuario;
     }
 
 }
