@@ -3,14 +3,17 @@ spring:
     name: usuarios
 
   datasource:
-    url: jdbc:mysql://localhost:3306/proyecto_web?useSSL=false&serverTimezone=UTC
-    username: root
-    password: JMM1994
+    # url: jdbc:mysql://localhost:3306/proyecto_web?useSSL=false&serverTimezone=UTC version 1
+    url: jdbc:mysql://localhost:3306/proyecto_web?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC #version 2 para utilizar otros usuarios
+    #username: root
+    #password: JMM1994
+    username: empleado
+    password: user1
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: none # ← deja de crear/modificar tablas
+      ddl-auto: none # ← deja de crear/modificar mis tablas
     properties:
       hibernate:
         physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl

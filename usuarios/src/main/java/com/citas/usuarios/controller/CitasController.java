@@ -25,9 +25,11 @@ import com.citas.usuarios.dto.CitasRequest;
 import com.citas.usuarios.dto.EmpleadoCita;
 import com.citas.usuarios.entity.Citas;
 import com.citas.usuarios.entity.Empleados;
+import com.citas.usuarios.entity.Horario_disponible;
 import com.citas.usuarios.entity.Usuario;
 import com.citas.usuarios.repository.CitaRepository;
 import com.citas.usuarios.repository.EmpleadosRepository;
+import com.citas.usuarios.repository.HorarioRepository;
 import com.citas.usuarios.repository.UsuarioRepository;
 
 @RestController
@@ -45,6 +47,9 @@ public class CitasController {
     @Autowired
     private TokenController tokenjwt;
 
+    @Autowired
+    private HorarioRepository dallyH;
+
     @PostMapping("/guardar/cita")
     public Map<String, Object> SaveCita(@RequestBody CitasRequest newsCita) {
         Map<String, Object> Respuesta = new HashMap<>();
@@ -53,13 +58,14 @@ public class CitasController {
         Long idEmpleado = newsCita.getIdEmpleado();
         Integer idCliente = newsCita.getIdCliente();
         String fechaCita = newsCita.getFecha();
-        String horaInicio = newsCita.getHorainicio();
+        Long id = newsCita.getIdHorario();
         Integer estadoCita = newsCita.getEStadoCita();
 
         Empleados empleadoDB = empleadoRepository.findById(idEmpleado).orElse(null);
         Usuario usuarioDB = usuarioRepository.findById(idCliente);
+        Horario_disponible horario = dallyH.findById(id).get();
 
-        if (newsCita.getFecha() == null || newsCita.getHorainicio() == null) {
+        if (newsCita.getFecha() == null || newsCita.getIdHorario() == null) {
             Respuesta.put("status", "error");
             Respuesta.put("mensaje", "La fecha o la hora no pueden estar vacías.");
             return Respuesta;
@@ -72,7 +78,8 @@ public class CitasController {
         citaNueva.setEStadoCita(1);
 
         citaNueva.setFechaCita(LocalDate.parse(fechaCita));
-        citaNueva.sethoraInicioCita(LocalTime.parse(horaInicio));
+        // citaNueva.sethoraInicioCita(LocalTime.parse(horaInicio));
+        citaNueva.sethoraInicioCita(horario);
 
         try {
             nuevaCita.save(citaNueva);
@@ -93,11 +100,13 @@ public class CitasController {
         Long idEmpleado = newsCita2.getIdEmpleado();
         Integer idCliente = newsCita2.getIdCliente();
         String fechaCita = newsCita2.getFecha();
-        String horaInicio = newsCita2.getHorainicio();
+        // String horaInicio = newsCita2.getHorainicio();
+        Long id = newsCita2.getIdHorario();
         Integer estadoCita = newsCita2.getEStadoCita();
 
         Empleados empleadoDB = empleadoRepository.findById(idEmpleado).orElse(null);
         Usuario usuarioDB = usuarioRepository.findById(idCliente);
+        Horario_disponible horario = dallyH.findById(id).get();
 
         if (newsCita2.getIdEmpleado() == null) {
             respuesta.put("mensaje", "La cita no puede estar sin especialista");
@@ -110,7 +119,7 @@ public class CitasController {
             return ResponseEntity.badRequest().body(respuesta);
         }
         if (newsCita2.getFecha() == null || newsCita2.getFecha().isEmpty() ||
-                newsCita2.getHorainicio() == null || newsCita2.getHorainicio().isEmpty()) {
+                newsCita2.getIdHorario() == null) {
             respuesta.put("mensaje", "La cita debe te tener una fecha para ser agendada");
             respuesta.put("codigo", 4);
             return ResponseEntity.badRequest().body(respuesta);
@@ -123,7 +132,8 @@ public class CitasController {
         nuevaCita2.setEStadoCita(1);
 
         nuevaCita2.setFechaCita(LocalDate.parse(fechaCita));
-        nuevaCita2.sethoraInicioCita(LocalTime.parse(horaInicio));
+        // nuevaCita2.sethoraInicioCita(LocalTime.parse(horaInicio));
+        nuevaCita2.sethoraInicioCita(horario);
 
         try {
             nuevaCita.save(nuevaCita2);
@@ -310,6 +320,7 @@ public class CitasController {
     public Map<String, Object> reprogramarCitas(@PathVariable Long idCita, @RequestBody CitasReprogramar reproCita) {
 
         Map<String, Object> response = new HashMap<>();
+        Horario_disponible horario = dallyH.findById(idCita).get();
 
         if (reproCita == null) {
             response.put("status", "error");
@@ -329,7 +340,8 @@ public class CitasController {
         return nuevaCita.findById(idCita).map(citaExistente -> {
             try {
                 citaExistente.setFechaCita(LocalDate.parse(newFecha));
-                citaExistente.sethoraInicioCita(LocalTime.parse(horaR));
+                // citaExistente.sethoraInicioCita(LocalTime.parse(horaR));
+                citaExistente.sethoraInicioCita(horario);
 
                 nuevaCita.save(citaExistente);
 

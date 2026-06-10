@@ -9,6 +9,7 @@ public class CitasRequest {
     private String especialidad;
     private Integer idCliente;
     private Integer estado;
+    private Long idHorario;
 
     @JsonProperty("nombreEespecialista")
     private String nombreEspecialista;
@@ -22,14 +23,17 @@ public class CitasRequest {
         return idEmpleado;
     }
 
-    @JsonProperty("horaInicio")
-    private String horaInicio;
-
-    @JsonProperty("horaFinal")
-    private String horaFinal;
+    /*
+     * @JsonProperty("horaInicio")
+     * private String horaInicio;
+     */
 
     public Integer getEStadoCita() {
         return estado;
+    }
+
+    public Long getIdHorario() {
+        return idHorario;
     }
 
     public long getId() {
@@ -60,14 +64,6 @@ public class CitasRequest {
 
     public String getFecha() {
         return fecha;
-    }
-
-    public String getHorainicio() {
-        return horaInicio;
-    }
-
-    public String getHorafinal() {
-        return horaFinal;
     }
 
     public void setIdCita(long id) {
@@ -104,11 +100,8 @@ public class CitasRequest {
         this.fecha = fecha;
     }
 
-    public void setHoraInicioCita(String horaInicio) {
-        this.horaInicio = horaInicio;
+    public void setIdHorario(Long idHorario) {
+        this.idHorario = idHorario;
     }
 
-    public void setHoraFinalCita(String horaFinal) {
-        this.horaFinal = horaFinal;
-    }
 }

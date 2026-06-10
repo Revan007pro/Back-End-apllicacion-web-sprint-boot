@@ -43,16 +43,18 @@ import com.citas.usuarios.entity.Usuario;
 import com.citas.usuarios.repository.UsuarioRepository;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4321")
+@CrossOrigin(origins = "*")
 public class UsuarioController {
 
   @Autowired
   private UsuarioRepository userRepository;
 
-  // @GetMapping
-  // public List<Empleados> listar() {
-  // return empleadoRepository.findAll();
-  // }
+  /*
+   * @GetMapping("consultar/usuario")
+   * public List<Empleados> listar() {
+   * return empleadoRepository.findAll();
+   * }
+   */
 
   @GetMapping("/consultar/{id}")
   public ResponseEntity<?> obtenerUser(@PathVariable Long id) {
@@ -97,6 +99,16 @@ public class UsuarioController {
     }
 
     return ResponseEntity.ok(respuesta);
+
+  }
+
+  @GetMapping("contar/usarios")
+  public ResponseEntity<Map<String, Object>> contarUser() {
+    Map<String, Object> respuesta = new HashMap<>();
+    long totalUsuarios = userRepository.count(); // hace el count de todos los registros de la tabla usuario
+    respuesta.put("total", totalUsuarios);
+    respuesta.put("mensaje", "el numero de usuarios es");
+    return ResponseEntity.status(HttpStatus.OK).body(respuesta);
 
   }
 

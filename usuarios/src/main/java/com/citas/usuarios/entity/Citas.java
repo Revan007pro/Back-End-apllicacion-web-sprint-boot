@@ -1,7 +1,6 @@
 package com.citas.usuarios.entity;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -45,6 +44,10 @@ public class Citas {
     @JoinColumn(name = "id_empleado", referencedColumnName = "id_empleado") // forma para mapear tablas forraneas
     private Empleados empleado;
 
+    @ManyToOne
+    @JoinColumn(name = "id_horario", referencedColumnName = "id") // forma para mapear tablas forraneas
+    private Horario_disponible idHorario;
+
     @Column(name = "id_sede")
     private Integer idSede;
 
@@ -58,8 +61,10 @@ public class Citas {
     @Column(name = "fecha")
     private LocalDate citaFecha;
 
-    @Column(name = "hora_cita")
-    private LocalTime horaInicio;
+    /*
+     * @Column(name = "hora_cita")
+     * private LocalTime horaInicio;
+     */
 
     public Integer getEstadoCita() {
         return estado;
@@ -82,8 +87,8 @@ public class Citas {
         return citaFecha;
     }
 
-    public LocalTime getHoraInicio() {
-        return horaInicio;
+    public Horario_disponible getHoraInicio() {
+        return idHorario;
     }
 
     public void setEStadoCita(Integer estado) {
@@ -106,8 +111,8 @@ public class Citas {
         this.citaFecha = citaFecha;
     }
 
-    public void sethoraInicioCita(LocalTime horaInicio) {
-        this.horaInicio = horaInicio;
+    public void sethoraInicioCita(Horario_disponible idHorario) {
+        this.idHorario = idHorario;
     }
 
 }
